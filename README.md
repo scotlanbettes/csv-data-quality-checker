@@ -246,7 +246,7 @@ This project demonstrates practical collaborative software-development practices
 
 Live Application:
 
-https://csv-data-quality-checker-zbqgjhzwciuvngr2gjerh3.streamlit.app/
+https://csv-data-quality-checker-zbqqjhzwciuvngr2gjerh3.streamlit.app/
 
 GitHub Repository:
 
