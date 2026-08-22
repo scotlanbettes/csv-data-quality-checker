@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
 
@@ -13,6 +15,7 @@ st.set_page_config(
 
 
 st.title("📊 CSV Data Quality Checker")
+
 st.markdown(
     """
     Upload a CSV file to assess its data quality, identify potential
@@ -21,16 +24,70 @@ st.markdown(
 )
 
 
-# Sidebar
+# ---------------------------------------------------------
+# Sidebar — Dataset selection
+# ---------------------------------------------------------
+
 st.sidebar.header("Dataset")
 
+sample_path = Path(__file__).parent / "sample_data" / "sample_dataset.csv"
+
+st.sidebar.markdown("### Try the demo")
+
+use_sample = st.sidebar.button(
+    "▶ Try sample dataset",
+    use_container_width=True,
+)
+
+st.sidebar.caption(
+    "A sample CSV is included with this project so you can "
+    "explore the dashboard without preparing a file."
+)
+
+st.sidebar.divider()
+
+st.sidebar.markdown("### Upload your own CSV")
+
 uploaded_file = st.sidebar.file_uploader(
-    "Upload a CSV file",
+    "Choose a CSV file",
     type=["csv"],
 )
 
-if uploaded_file is None:
-    st.info("👈 Upload a CSV file from the sidebar to begin.")
+
+# ---------------------------------------------------------
+# Load selected dataset
+# ---------------------------------------------------------
+
+df = None
+dataset_source = None
+
+if use_sample:
+    try:
+        df = pd.read_csv(sample_path)
+        dataset_source = "Built-in sample dataset"
+    except Exception as error:
+        st.error(f"Unable to load the sample dataset: {error}")
+        st.stop()
+
+elif uploaded_file is not None:
+    try:
+        df = pd.read_csv(uploaded_file)
+        dataset_source = f"Uploaded file: {uploaded_file.name}"
+    except Exception as error:
+        st.error(f"Unable to read the CSV file: {error}")
+        st.stop()
+
+
+# ---------------------------------------------------------
+# Welcome screen
+# ---------------------------------------------------------
+
+if df is None:
+    st.info(
+        "👈 Click **Try sample dataset** in the sidebar, "
+        "or upload your own CSV file."
+    )
+
     st.markdown(
         """
         ### What this application checks
@@ -41,25 +98,34 @@ if uploaded_file is None:
         - Missing-value percentage
         - Duplicate-row percentage
         - Overall data-quality score
+
+        ### Quick start
+
+        **Recruiter/demo:** Click **Try sample dataset**.
+
+        **Your own data:** Upload any CSV file using the uploader.
         """
     )
-    st.stop()
 
-
-# Load CSV
-try:
-    df = pd.read_csv(uploaded_file)
-except Exception as error:
-    st.error(f"Unable to read the CSV file: {error}")
     st.stop()
 
 
 if df.empty:
-    st.warning("The uploaded CSV file contains no rows.")
+    st.warning("The selected CSV file contains no rows.")
     st.stop()
 
 
+# ---------------------------------------------------------
+# Dataset source
+# ---------------------------------------------------------
+
+st.caption(f"Dataset: **{dataset_source}**")
+
+
+# ---------------------------------------------------------
 # Dataset overview
+# ---------------------------------------------------------
+
 st.header("Dataset Overview")
 
 col1, col2, col3 = st.columns(3)
@@ -78,9 +144,16 @@ with st.expander("Preview dataset", expanded=True):
     st.dataframe(df, use_container_width=True)
 
 
-# Generate quality metrics using the existing data-quality engine
+# ---------------------------------------------------------
+# Generate quality metrics
+# ---------------------------------------------------------
+
 metrics = generate_quality_metrics(df)
 
+
+# ---------------------------------------------------------
+# Data Quality Score
+# ---------------------------------------------------------
 
 st.header("Data Quality Score")
 
@@ -99,13 +172,22 @@ else:
 score_col1, score_col2 = st.columns(2)
 
 with score_col1:
-    st.metric("Overall Quality Score", f"{score:.2f}/100")
+    st.metric(
+        "Overall Quality Score",
+        f"{score:.2f}/100",
+    )
 
 with score_col2:
-    st.metric("Assessment", score_status)
+    st.metric(
+        "Assessment",
+        score_status,
+    )
 
 
-# Quality metrics
+# ---------------------------------------------------------
+# Quality Metrics
+# ---------------------------------------------------------
+
 st.header("Quality Metrics")
 
 metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
@@ -137,7 +219,10 @@ with metric_col4:
     )
 
 
+# ---------------------------------------------------------
 # Validation
+# ---------------------------------------------------------
+
 st.header("Validation Results")
 
 id_column = None
@@ -146,8 +231,10 @@ if "id" in df.columns:
     id_column = "id"
 else:
     st.info(
-        "No 'id' column was detected. Duplicate-ID validation will be skipped."
+        "No 'id' column was detected. "
+        "Duplicate-ID validation will be skipped."
     )
+
 
 validation_results = validate_dataframe(
     df,
@@ -176,7 +263,10 @@ with validation_col3:
     )
 
 
+# ---------------------------------------------------------
 # Missing values by column
+# ---------------------------------------------------------
+
 st.header("Missing Values by Column")
 
 missing_values = validation_results["missing_values"]
@@ -197,7 +287,10 @@ else:
     )
 
 
+# ---------------------------------------------------------
 # Quality visualization
+# ---------------------------------------------------------
+
 st.header("Quality Breakdown")
 
 chart_data = pd.DataFrame(
@@ -220,16 +313,19 @@ st.bar_chart(
 )
 
 
+# ---------------------------------------------------------
 # Methodology
+# ---------------------------------------------------------
+
 with st.expander("How is the quality score calculated?"):
     st.markdown(
         """
         The quality score starts at **100**.
 
-        The score is reduced according to the percentage of:
+        The score is reduced according to:
 
-        - Missing cells
-        - Duplicate rows
+        - Missing-cell percentage
+        - Duplicate-row percentage
 
         The formula is:
 
