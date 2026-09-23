@@ -1,4 +1,5 @@
 import pandas as pd
+
 from data_quality.metrics import (
     calculate_missing_percentage,
     calculate_duplicate_percentage,
@@ -10,6 +11,8 @@ from data_quality.validator import (
     check_missing_values,
     check_duplicate_rows,
     check_duplicate_ids,
+    check_empty_strings,
+    check_whitespace_issues,
 )
 
 
@@ -94,3 +97,27 @@ def test_generate_quality_metrics():
     assert result["missing_percentage"] == 12.5
     assert result["duplicate_percentage"] == 25.0
     assert result["quality_score"] == 62.5
+
+
+def test_empty_strings():
+    df = pd.DataFrame({
+        "name": ["Alice", "", "   ", None, "David"],
+        "city": ["Nairobi", "Mombasa", "", "Kisumu", "Eldoret"],
+    })
+
+    result = check_empty_strings(df)
+
+    assert result["name"] == 3
+    assert result["city"] == 1
+
+
+def test_whitespace_issues():
+    df = pd.DataFrame({
+        "name": ["Alice", " Bob", "Charlie ", " David "],
+        "city": ["Nairobi", "Mombasa", "Kisumu", "Eldoret"],
+    })
+
+    result = check_whitespace_issues(df)
+
+    assert result["name"] == 3
+    assert result["city"] == 0
