@@ -14,6 +14,7 @@ from data_quality.validator import (
     check_empty_strings,
     check_whitespace_issues,
     check_inconsistent_data_types,
+    check_outliers,
 )
 
 
@@ -134,3 +135,16 @@ def test_inconsistent_data_types():
 
     assert result["mixed"] == 3
     assert result["normal"] == 1
+
+
+def test_outliers():
+    df = pd.DataFrame({
+        "age": [20, 21, 22, 23, 24, 100],
+        "score": [70, 72, 74, 76, 78, 80],
+        "name": ["A", "B", "C", "D", "E", "F"],
+    })
+
+    result = check_outliers(df)
+
+    assert result["age"] == 1
+    assert result["score"] == 0

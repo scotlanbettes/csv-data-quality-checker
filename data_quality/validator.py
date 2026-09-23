@@ -79,6 +79,49 @@ def check_inconsistent_data_types(df):
     return pd.Series(results, dtype="int64")
 
 
+def check_outliers(df, exclude_columns=None):
+    """
+    Detect outliers in numeric columns using the IQR method.
+
+    Values below Q1 - 1.5 * IQR or above Q3 + 1.5 * IQR
+    are counted as outliers.
+    """
+    results = {}
+    exclude_columns = set(exclude_columns or [])
+
+    numeric_columns = df.select_dtypes(include="number").columns
+
+    for column in numeric_columns:
+        if column in exclude_columns:
+            continue
+
+        values = df[column].dropna()
+
+        if values.empty:
+            results[column] = 0
+            continue
+
+        q1 = values.quantile(0.25)
+        q3 = values.quantile(0.75)
+        iqr = q3 - q1
+
+        if iqr == 0:
+            results[column] = 0
+            continue
+
+        lower_bound = q1 - (1.5 * iqr)
+        upper_bound = q3 + (1.5 * iqr)
+
+        outliers = (
+            (values < lower_bound) |
+            (values > upper_bound)
+        ).sum()
+
+        results[column] = int(outliers)
+
+    return pd.Series(results, dtype="int64")
+
+
 def validate_dataframe(df, id_column="id"):
     """
     Run all available data-quality checks and return the results.
@@ -92,6 +135,10 @@ def validate_dataframe(df, id_column="id"):
         "empty_strings": check_empty_strings(df),
         "whitespace_issues": check_whitespace_issues(df),
         "inconsistent_data_types": check_inconsistent_data_types(df),
+        "outliers": check_outliers(
+            df,
+            exclude_columns=[id_column]
+        ),
     }
 
     return results
