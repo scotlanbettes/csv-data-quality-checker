@@ -4,6 +4,7 @@ from data_quality.metrics import (
     calculate_missing_percentage,
     calculate_duplicate_percentage,
     calculate_quality_score,
+    calculate_quality_breakdown,
     generate_quality_metrics,
 )
 
@@ -82,7 +83,30 @@ def test_quality_score():
 
     result = calculate_quality_score(df)
 
-    assert result == 62.5
+    # V2 weighted scoring:
+    # Missing values: 12.5% * 0.30 = 3.75
+    # Duplicate rows: 25% * 0.15 = 3.75
+    # Duplicate IDs: 25% * 0.10 = 2.50
+    # Total penalty = 10
+    assert result == 90.0
+
+
+def test_quality_breakdown():
+    df = pd.DataFrame({
+        "id": [1, 2, 2, 3],
+        "name": ["Alice", "Bob", "Bob", None],
+    })
+
+    result = calculate_quality_breakdown(df)
+
+    assert result["missing_values"] == 12.5
+    assert result["duplicate_rows"] == 25.0
+    assert result["duplicate_ids"] == 25.0
+    assert result["empty_strings"] == 0.0
+    assert result["whitespace_issues"] == 0.0
+    assert result["inconsistent_data_types"] == 0.0
+    assert result["outliers"] == 0.0
+    assert result["inconsistent_capitalization"] == 0.0
 
 
 def test_generate_quality_metrics():
@@ -95,11 +119,28 @@ def test_generate_quality_metrics():
 
     assert result["total_rows"] == 4
     assert result["total_columns"] == 2
+
     assert result["missing_values"] == 1
     assert result["duplicate_rows"] == 1
+    assert result["duplicate_ids"] == 1
+
+    assert result["empty_strings"] == 0
+    assert result["whitespace_issues"] == 0
+    assert result["inconsistent_type_columns"] == 0
+    assert result["outliers"] == 0
+    assert result["capitalization_issues"] == 0
+
     assert result["missing_percentage"] == 12.5
     assert result["duplicate_percentage"] == 25.0
-    assert result["quality_score"] == 62.5
+    assert result["duplicate_id_percentage"] == 25.0
+
+    assert result["empty_string_percentage"] == 0.0
+    assert result["whitespace_percentage"] == 0.0
+    assert result["inconsistent_type_percentage"] == 0.0
+    assert result["outlier_percentage"] == 0.0
+    assert result["capitalization_percentage"] == 0.0
+
+    assert result["quality_score"] == 90.0
 
 
 def test_empty_strings():
