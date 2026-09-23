@@ -122,6 +122,50 @@ def check_outliers(df, exclude_columns=None):
     return pd.Series(results, dtype="int64")
 
 
+def check_inconsistent_capitalization(df):
+    """
+    Detect text values that represent the same value
+    but use different capitalization.
+
+    Example:
+    Nairobi, nairobi, NAIROBI
+
+    Returns the number of affected values in each text column.
+    """
+    results = {}
+
+    text_columns = df.select_dtypes(
+        include=["object", "string"]
+    ).columns
+
+    for column in text_columns:
+        values = df[column].dropna().astype(str).str.strip()
+
+        # Ignore empty strings.
+        values = values[values.ne("")]
+
+        if values.empty:
+            results[column] = 0
+            continue
+
+        normalized = values.str.casefold()
+
+        inconsistent_count = 0
+
+        for normalized_value in normalized.unique():
+            group_mask = normalized.eq(normalized_value)
+            original_values = values[group_mask]
+
+            # If the same logical value has more than one
+            # capitalization style, count all affected rows.
+            if original_values.nunique() > 1:
+                inconsistent_count += len(original_values)
+
+        results[column] = inconsistent_count
+
+    return pd.Series(results, dtype="int64")
+
+
 def validate_dataframe(df, id_column="id"):
     """
     Run all available data-quality checks and return the results.
@@ -139,6 +183,8 @@ def validate_dataframe(df, id_column="id"):
             df,
             exclude_columns=[id_column]
         ),
+        "inconsistent_capitalization":
+            check_inconsistent_capitalization(df),
     }
 
     return results

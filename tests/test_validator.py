@@ -15,6 +15,7 @@ from data_quality.validator import (
     check_whitespace_issues,
     check_inconsistent_data_types,
     check_outliers,
+    check_inconsistent_capitalization,
 )
 
 
@@ -148,3 +149,27 @@ def test_outliers():
 
     assert result["age"] == 1
     assert result["score"] == 0
+
+
+def test_inconsistent_capitalization():
+    df = pd.DataFrame({
+        "city": [
+            "Nairobi",
+            "nairobi",
+            "NAIROBI",
+            "Mombasa",
+            "Kisumu",
+        ],
+        "status": [
+            "Active",
+            "Inactive",
+            "Pending",
+            "Closed",
+            "Open",
+        ],
+    })
+
+    result = check_inconsistent_capitalization(df)
+
+    assert result["city"] == 3
+    assert result["status"] == 0
