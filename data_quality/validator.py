@@ -26,7 +26,7 @@ def check_empty_strings(df):
     """
     results = {}
 
-    for column in df.select_dtypes(include="object").columns:
+    for column in df.select_dtypes(include=["object", "string"]).columns:
         results[column] = (
             df[column]
             .fillna("")
@@ -46,12 +46,35 @@ def check_whitespace_issues(df):
     """
     results = {}
 
-    for column in df.select_dtypes(include="object").columns:
+    for column in df.select_dtypes(include=["object", "string"]).columns:
         values = df[column].dropna().astype(str)
 
         results[column] = (
             values.ne(values.str.strip())
         ).sum()
+
+    return pd.Series(results, dtype="int64")
+
+
+def check_inconsistent_data_types(df):
+    """
+    Return the number of distinct Python data types
+    found in each column.
+
+    A value greater than 1 may indicate mixed or
+    inconsistent data types.
+    """
+    results = {}
+
+    for column in df.columns:
+        non_null_values = df[column].dropna()
+
+        if non_null_values.empty:
+            results[column] = 0
+            continue
+
+        detected_types = non_null_values.map(type).nunique()
+        results[column] = detected_types
 
     return pd.Series(results, dtype="int64")
 
@@ -68,6 +91,7 @@ def validate_dataframe(df, id_column="id"):
         "duplicate_ids": check_duplicate_ids(df, id_column),
         "empty_strings": check_empty_strings(df),
         "whitespace_issues": check_whitespace_issues(df),
+        "inconsistent_data_types": check_inconsistent_data_types(df),
     }
 
     return results

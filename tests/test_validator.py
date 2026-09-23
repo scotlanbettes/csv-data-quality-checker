@@ -13,6 +13,7 @@ from data_quality.validator import (
     check_duplicate_ids,
     check_empty_strings,
     check_whitespace_issues,
+    check_inconsistent_data_types,
 )
 
 
@@ -121,3 +122,15 @@ def test_whitespace_issues():
 
     assert result["name"] == 3
     assert result["city"] == 0
+
+
+def test_inconsistent_data_types():
+    df = pd.DataFrame({
+        "mixed": [1, "2", 3.5, None],
+        "normal": ["Alice", "Bob", "Charlie", "David"],
+    })
+
+    result = check_inconsistent_data_types(df)
+
+    assert result["mixed"] == 3
+    assert result["normal"] == 1
