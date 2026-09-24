@@ -42,13 +42,21 @@ The V2 work includes:
 
 ## 🌐 Live Application
 
-Current deployment:
+Version 2 is deployed on Streamlit Community Cloud:
 
-https://csv-data-quality-checker-zbqqjhzwciuvngr2gjerh3.streamlit.app/
+https://csv-data-quality-checker-v2.streamlit.app/
 
-> Version 2 is currently being prepared for its production deployment from the `version-2` branch.
+No installation is required.
 
-No installation is required to use the deployed application.
+You can:
+
+- Select the built-in sample dataset
+- Upload your own CSV file
+- Analyze data-quality issues
+- Clean detected problems
+- Compare before-and-after quality scores
+- Download the cleaned CSV
+- Download a data-quality report
 
 ---
 
@@ -501,7 +509,17 @@ A demonstration dataset is included at:
 sample_data/sample_dataset.csv
 ```
 
-The sample data contains intentional quality issues so users can explore the application's detection and cleaning features without preparing their own CSV file.
+The Version 2 sample dataset intentionally contains several data-quality issues so users can immediately explore the application's detection and cleaning features.
+
+The sample includes examples of:
+
+- Missing values
+- Duplicate rows
+- Duplicate IDs
+- Whitespace issues
+- Empty strings
+- Inconsistent capitalization
+- Numeric outliers
 
 ---
 
@@ -632,8 +650,9 @@ Version 2 development includes:
 - CSV export
 - Quality-report export
 - Redesigned Streamlit dashboard
-- Expanded test suite
+- Expanded automated test suite
 - GitHub Actions CI
+- Streamlit Community Cloud deployment
 - Version 2 documentation
 
 GitHub:
@@ -669,14 +688,18 @@ GitHub Actions Runs Tests
     ↓
 Review Results
     ↓
-Continue Development
+Deploy / Continue Development
 ```
 
-This keeps the stable Version 1 history separate while Version 2 is developed and tested.
+The Version 2 branch is maintained separately from the original Version 1 code while the upgrade is finalized and prepared for integration.
 
 ---
 
 # 🔗 Project Links
+
+## Version 2 Live Application
+
+https://csv-data-quality-checker-v2.streamlit.app/
 
 ## GitHub Repository
 
@@ -686,13 +709,17 @@ https://github.com/scotlanbettes/csv-data-quality-checker
 
 https://github.com/scotlanbettes/csv-data-quality-checker/tree/version-2
 
-## Current Live Application
+## Version 2 Pull Request
 
-https://csv-data-quality-checker-zbqqjhzwciuvngr2gjerh3.streamlit.app/
+https://github.com/scotlanbettes/csv-data-quality-checker/pull/4
 
 ## Job Munyoki GitHub
 
 https://github.com/JobMunyoki
+
+## Scotlan Bettes GitHub
+
+https://github.com/scotlanbettes
 
 ---
 
