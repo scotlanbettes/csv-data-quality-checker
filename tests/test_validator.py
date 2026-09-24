@@ -5,6 +5,7 @@ from data_quality.metrics import (
     calculate_duplicate_percentage,
     calculate_quality_score,
     calculate_quality_breakdown,
+    calculate_column_quality_scores,
     generate_quality_metrics,
 )
 
@@ -214,3 +215,47 @@ def test_inconsistent_capitalization():
 
     assert result["city"] == 3
     assert result["status"] == 0
+
+
+def test_column_quality_scores():
+    df = pd.DataFrame({
+        "id": [1, 2, 2, 3, 4, 5],
+        "city": [
+            "Nairobi",
+            "nairobi",
+            "NAIROBI",
+            "Mombasa",
+            "",
+            None,
+        ],
+        "age": [20, 21, 22, 23, 24, 100],
+    })
+
+    result = calculate_column_quality_scores(df)
+
+    assert len(result) == 3
+
+    assert set(result["column"]) == {
+        "id",
+        "city",
+        "age",
+    }
+
+    id_score = result.loc[
+        result["column"] == "id",
+        "quality_score"
+    ].iloc[0]
+
+    city_score = result.loc[
+        result["column"] == "city",
+        "quality_score"
+    ].iloc[0]
+
+    age_score = result.loc[
+        result["column"] == "age",
+        "quality_score"
+    ].iloc[0]
+
+    assert id_score == 99.17
+    assert city_score == 87.5
+    assert age_score == 97.5
