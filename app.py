@@ -34,7 +34,7 @@ st.set_page_config(
 # Header
 # =========================================================
 
-st.title("📊 CSV Data Quality Checker — Version 2")
+st.title("📊 CSV Data Quality Checker V2")
 
 st.markdown(
     """
