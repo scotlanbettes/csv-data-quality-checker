@@ -1,7 +1,14 @@
 id,name,email,age,city
-1,John,john@example.com,25,New York
-2,Mary,mary@example.com,30,London
-3,Peter,,28,Chicago
-4,Grace,grace@example.com,,Texas
-4,Grace,grace@example.com,,Nairobi
-6,James,james@example.com,40,
+1,John Doe,john@example.com,25,Nairobi
+2,Mary Smith,mary@example.com,30,London
+3,Peter Kim,,28,Chicago
+4,Grace Wanjiku,grace@example.com,,Nairobi
+4,Grace Wanjiku,grace.alt@example.com,31,Nairobi
+5," Alice Brown ",alice@example.com,29," Nairobi "
+6,James Kariuki,james@example.com,40,Mombasa
+7,Sarah Lee,sarah@example.com,200,Kisumu
+8,David Kim,david@example.com,35,nairobi
+9,Emma Stone,emma@example.com,27,NAIROBI
+10,"   ",unknown@example.com,33,Eldoret
+11,Paul Otieno,paul@example.com,32,Mombasa
+11,Paul Otieno,paul@example.com,32,Mombasa
