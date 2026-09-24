@@ -4,6 +4,7 @@ from data_quality.cleaner import (
     trim_whitespace,
     remove_duplicate_rows,
     standardize_empty_strings,
+    standardize_text_case,
     drop_missing_rows,
     fill_numeric_missing,
     fill_text_missing_with_mode,
@@ -197,3 +198,97 @@ def test_clean_dataframe_with_missing_strategy():
     assert result["name"].iloc[0] == "Alice"
     assert result["name"].iloc[2] == "Charlie"
     assert result["age"].iloc[1] == 30.0
+
+
+def test_standardize_text_case_title():
+    df = pd.DataFrame({
+        "city": [
+            "nairobi",
+            "NAIROBI",
+            "mOmBaSa",
+        ],
+    })
+
+    result = standardize_text_case(
+        df,
+        strategy="title",
+    )
+
+    assert result["city"].tolist() == [
+        "Nairobi",
+        "Nairobi",
+        "Mombasa",
+    ]
+
+
+def test_standardize_text_case_lower():
+    df = pd.DataFrame({
+        "status": [
+            "ACTIVE",
+            "Pending",
+            "CLOSED",
+        ],
+    })
+
+    result = standardize_text_case(
+        df,
+        strategy="lower",
+    )
+
+    assert result["status"].tolist() == [
+        "active",
+        "pending",
+        "closed",
+    ]
+
+
+def test_standardize_text_case_upper_selected_column():
+    df = pd.DataFrame({
+        "city": [
+            "Nairobi",
+            "Mombasa",
+        ],
+        "name": [
+            "Alice",
+            "Bob",
+        ],
+    })
+
+    result = standardize_text_case(
+        df,
+        strategy="upper",
+        columns=["city"],
+    )
+
+    assert result["city"].tolist() == [
+        "NAIROBI",
+        "MOMBASA",
+    ]
+
+    assert result["name"].tolist() == [
+        "Alice",
+        "Bob",
+    ]
+
+
+def test_clean_dataframe_with_text_case():
+    df = pd.DataFrame({
+        "id": [1, 2, 3],
+        "city": [
+            " nairobi ",
+            "NAIROBI",
+            " mombasa ",
+        ],
+    })
+
+    result = clean_dataframe(
+        df,
+        text_case_strategy="title",
+        text_case_columns=["city"],
+    )
+
+    assert result["city"].tolist() == [
+        "Nairobi",
+        "Nairobi",
+        "Mombasa",
+    ]

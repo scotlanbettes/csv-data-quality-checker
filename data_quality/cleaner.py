@@ -64,6 +64,71 @@ def standardize_empty_strings(df):
     return cleaned_df
 
 
+def standardize_text_case(
+    df,
+    strategy="title",
+    columns=None,
+):
+    """
+    Standardize capitalization in selected text columns.
+
+    Supported strategies:
+    - title
+    - lower
+    - upper
+
+    If columns is None, all text columns are processed.
+    """
+    cleaned_df = df.copy()
+
+    if strategy not in {"title", "lower", "upper"}:
+        raise ValueError(
+            "Text case strategy must be "
+            "'title', 'lower', or 'upper'."
+        )
+
+    text_columns = list(
+        cleaned_df.select_dtypes(
+            include=["object", "string"]
+        ).columns
+    )
+
+    if columns is not None:
+        text_columns = [
+            column
+            for column in text_columns
+            if column in columns
+        ]
+
+    for column in text_columns:
+        cleaned_df[column] = cleaned_df[column].apply(
+            lambda value: (
+                _convert_text_case(
+                    value,
+                    strategy
+                )
+                if isinstance(value, str)
+                else value
+            )
+        )
+
+    return cleaned_df
+
+
+def _convert_text_case(value, strategy):
+    """
+    Convert a single string using the selected
+    capitalization strategy.
+    """
+    if strategy == "title":
+        return value.title()
+
+    if strategy == "lower":
+        return value.lower()
+
+    return value.upper()
+
+
 def drop_missing_rows(df, subset=None):
     """
     Remove rows containing missing values.
@@ -78,7 +143,11 @@ def drop_missing_rows(df, subset=None):
     return cleaned_df
 
 
-def fill_numeric_missing(df, strategy="mean", columns=None):
+def fill_numeric_missing(
+    df,
+    strategy="mean",
+    columns=None,
+):
     """
     Fill missing values in numeric columns using
     either the mean or median.
@@ -91,7 +160,8 @@ def fill_numeric_missing(df, strategy="mean", columns=None):
 
     if strategy not in {"mean", "median"}:
         raise ValueError(
-            "Numeric strategy must be 'mean' or 'median'."
+            "Numeric strategy must be "
+            "'mean' or 'median'."
         )
 
     numeric_columns = list(
@@ -109,9 +179,13 @@ def fill_numeric_missing(df, strategy="mean", columns=None):
 
     for column in numeric_columns:
         if strategy == "mean":
-            fill_value = cleaned_df[column].mean()
+            fill_value = (
+                cleaned_df[column].mean()
+            )
         else:
-            fill_value = cleaned_df[column].median()
+            fill_value = (
+                cleaned_df[column].median()
+            )
 
         if pd.notna(fill_value):
             cleaned_df[column] = (
@@ -122,7 +196,10 @@ def fill_numeric_missing(df, strategy="mean", columns=None):
     return cleaned_df
 
 
-def fill_text_missing_with_mode(df, columns=None):
+def fill_text_missing_with_mode(
+    df,
+    columns=None,
+):
     """
     Fill missing values in text columns using
     the most frequently occurring value.
@@ -250,16 +327,25 @@ def clean_dataframe(
     missing_strategy=None,
     custom_missing_value=None,
     missing_columns=None,
+    text_case_strategy=None,
+    text_case_columns=None,
 ):
     """
     Run selected cleaning operations on a dataframe.
 
-    Missing-value handling is optional.
+    Cleaning can include:
+    - trimming whitespace
+    - standardizing empty strings
+    - handling missing values
+    - standardizing capitalization
+    - removing duplicate rows
     """
     cleaned_df = df.copy()
 
     if trim_spaces:
-        cleaned_df = trim_whitespace(cleaned_df)
+        cleaned_df = trim_whitespace(
+            cleaned_df
+        )
 
     if normalize_empty_strings:
         cleaned_df = standardize_empty_strings(
@@ -272,6 +358,13 @@ def clean_dataframe(
             strategy=missing_strategy,
             custom_value=custom_missing_value,
             columns=missing_columns,
+        )
+
+    if text_case_strategy is not None:
+        cleaned_df = standardize_text_case(
+            cleaned_df,
+            strategy=text_case_strategy,
+            columns=text_case_columns,
         )
 
     if remove_duplicates:
