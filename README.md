@@ -1,257 +1,701 @@
-📊 CSV Data Quality Checker
+# 📊 CSV Data Quality Checker
 
-An interactive Streamlit application for assessing the quality of CSV datasets.
+A Python and Streamlit application for analyzing, validating, cleaning, and improving the quality of CSV datasets.
 
-The application identifies common data-quality issues such as missing values, duplicate rows, and duplicate IDs, then calculates an overall data-quality score and presents the results through an interactive dashboard.
+CSV Data Quality Checker identifies common data-quality problems, calculates dataset and column-level quality scores, provides interactive cleaning tools, compares data before and after cleaning, and allows users to download cleaned datasets and quality reports.
 
-🚀 Live Demo: https://csv-data-quality-checker-zbqqjhzwciuvngr2gjerh3.streamlit.app/
+![Python Tests](https://github.com/scotlanbettes/csv-data-quality-checker/actions/workflows/tests.yml/badge.svg)
 
-👉 Open the CSV Data Quality Checker: https://csv-data-quality-checker-zbqqjhzwciuvngr2gjerh3.streamlit.app/
+---
 
-No installation is required.
+## 🚀 Version 2
 
-You can click "Try sample dataset" to explore the dashboard immediately, or upload your own CSV file.
+Version 2 significantly expands the original CSV Data Quality Checker from a basic validation dashboard into a more complete data-quality analysis and cleaning application.
 
-✨ Features
-📁 Upload CSV datasets
-▶️ Try the included sample dataset
-🔎 Preview uploaded datasets
-📊 Display dataset overview
-⚠️ Detect missing values
-🔁 Detect duplicate rows
-🆔 Detect duplicate IDs
-📈 Calculate missing-value percentage
-📈 Calculate duplicate-row percentage
-⭐ Calculate an overall data-quality score
-📊 Visualize quality metrics
-✅ Display validation results
-📖 Explain the quality-score methodology
-🧪 Quick Demo
+### Version 2 Developer
 
-A sample dataset is included in:
+**Job Munyoki**
 
-sample_data/sample_dataset.csv
+Version 2 was independently developed by Job Munyoki, building on the original Version 1 collaborative project.
 
-The sample dataset intentionally contains data-quality issues so users can immediately see the application in action.
+The V2 work includes:
 
-Example result:
+- Advanced data-quality validation
+- Weighted quality scoring
+- Column-level quality scores
+- Numeric outlier detection
+- Empty-string detection
+- Whitespace detection
+- Inconsistent data-type detection
+- Inconsistent capitalization detection
+- Interactive data-cleaning tools
+- Missing-value handling strategies
+- Text capitalization standardization
+- Before-and-after quality comparison
+- Cleaned CSV export
+- Data-quality report export
+- Redesigned five-tab Streamlit dashboard
+- Expanded automated test suite
+- GitHub Actions continuous integration
 
-Rows: 6
-Columns: 5
-Total Cells: 30
-Quality Score: 86.67 / 100
-Assessment: Good
+---
 
-To try the application:
+## 🌐 Live Application
 
-Open the Live Demo.
-Click "Try sample dataset".
-Explore the quality results.
-Optionally upload your own CSV file.
-🛠️ Technology Stack
-Python
-Pandas
-Streamlit
-Pytest
-Git & GitHub
-Streamlit Community Cloud
-📂 Project Structure
+Current deployment:
+
+https://csv-data-quality-checker-zbqqjhzwciuvngr2gjerh3.streamlit.app/
+
+> Version 2 is currently being prepared for its production deployment from the `version-2` branch.
+
+No installation is required to use the deployed application.
+
+---
+
+# ✨ Version 2 Features
+
+## 🔍 Advanced Data Quality Validation
+
+The application can detect:
+
+- Missing values
+- Duplicate rows
+- Duplicate IDs
+- Empty strings
+- Whitespace-only values
+- Leading and trailing whitespace
+- Inconsistent Python data types
+- Numeric outliers
+- Inconsistent capitalization
+
+---
+
+## ⭐ Weighted Data Quality Score
+
+Version 2 uses a weighted scoring model instead of the original Version 1 formula.
+
+The overall score starts at **100** and applies weighted penalties based on detected quality problems.
+
+| Quality Dimension           | Weight |
+| --------------------------- | -----: |
+| Missing Values              |    30% |
+| Duplicate Rows              |    15% |
+| Duplicate IDs               |    10% |
+| Empty Strings               |    10% |
+| Whitespace Issues           |    10% |
+| Inconsistent Data Types     |    10% |
+| Numeric Outliers            |    10% |
+| Inconsistent Capitalization |     5% |
+
+The final score is restricted to:
+
+```text
+0 ≤ Quality Score ≤ 100
+```
+
+This gives a more complete assessment than only considering missing values and duplicate rows.
+
+---
+
+## 🔎 Column-Level Quality Scores
+
+Version 2 also calculates quality scores for individual columns.
+
+Each column can be evaluated for relevant issues such as:
+
+- Missing values
+- Empty strings
+- Whitespace
+- Mixed data types
+- Outliers
+- Capitalization inconsistencies
+- Duplicate IDs for the selected identifier column
+
+This helps users identify exactly which columns require attention.
+
+---
+
+# 🧹 Data Cleaning
+
+Version 2 can actively clean datasets rather than only identifying problems.
+
+Available cleaning operations include:
+
+### Whitespace Cleaning
+
+- Remove leading whitespace
+- Remove trailing whitespace
+
+### Empty Value Standardization
+
+Whitespace-only or blank strings can be converted into standardized missing values.
+
+### Duplicate Removal
+
+Fully duplicated rows can be automatically removed.
+
+### Missing-Value Handling
+
+Available strategies include:
+
+- Drop rows containing missing values
+- Fill numeric values using the mean
+- Fill numeric values using the median
+- Fill text values using the mode
+- Fill values using a custom replacement
+
+### Text Standardization
+
+Selected text columns can be converted to:
+
+- Title Case
+- lowercase
+- UPPERCASE
+
+Cleaning is performed on a copy of the uploaded dataset so the original data remains unchanged.
+
+---
+
+# 📊 Version 2 Dashboard
+
+The Streamlit interface is organized into five main tabs.
+
+## 📊 Overview
+
+Displays:
+
+- Dataset row count
+- Column count
+- Total cells
+- Overall quality score
+- Missing values
+- Duplicate rows
+- Duplicate IDs
+- Outliers
+- Empty strings
+- Whitespace issues
+- Type inconsistencies
+- Capitalization issues
+- Dataset preview
+- Quality breakdown visualization
+
+## ⚠️ Issues
+
+Provides detailed information about detected problems, including:
+
+- Missing values by column
+- Empty strings
+- Whitespace problems
+- Mixed data types
+- Numeric outliers
+- Capitalization inconsistencies
+- Duplicate rows
+- Duplicate IDs
+
+## 🔎 Column Analysis
+
+Displays:
+
+- Column name
+- Data type
+- Missing percentage
+- Empty-string percentage
+- Whitespace percentage
+- Inconsistent-type percentage
+- Outlier percentage
+- Capitalization percentage
+- Duplicate-ID percentage
+- Column quality score
+
+Users can also inspect individual columns.
+
+## 🧹 Data Cleaning
+
+Provides interactive controls for:
+
+- Trimming whitespace
+- Standardizing empty strings
+- Removing duplicate rows
+- Handling missing values
+- Selecting columns to clean
+- Standardizing capitalization
+- Previewing cleaned data
+- Comparing before/after scores
+- Downloading the cleaned CSV
+
+## 📄 Report
+
+Provides a before-and-after quality comparison showing how cleaning affected the dataset.
+
+Users can also download a text-based data-quality report.
+
+---
+
+# 📈 Before-and-After Comparison
+
+Version 2 tracks the impact of cleaning operations.
+
+Example:
+
+```text
+Before Cleaning
+Quality Score: 78.40
+
+After Cleaning
+Quality Score: 94.70
+
+Quality Score Change: +16.30
+```
+
+The reporting engine also tracks changes such as:
+
+- Rows removed
+- Missing values resolved
+- Duplicate rows removed
+- Duplicate IDs resolved
+- Empty strings resolved
+- Whitespace issues resolved
+- Outliers resolved
+- Capitalization issues resolved
+
+---
+
+# ⬇️ Export Features
+
+Version 2 supports downloadable outputs.
+
+## Cleaned CSV
+
+Users can download the cleaned dataset as:
+
+```text
+cleaned_dataset.csv
+```
+
+## Quality Report
+
+Users can also download:
+
+```text
+data_quality_report.txt
+```
+
+The report includes:
+
+- Original quality metrics
+- Cleaned quality metrics
+- Quality score comparison
+- Cleaning summary
+- Issues resolved
+
+---
+
+# 🆔 Configurable Identifier Column
+
+Version 1 automatically looked for a column named:
+
+```text
+id
+```
+
+Version 2 allows users to choose the column that represents the dataset's identifier or primary key.
+
+If no identifier column is required, duplicate-ID checking can be disabled.
+
+---
+
+# 🧪 Automated Testing
+
+The project contains automated tests for validation, metrics, cleaning, reporting, and export functionality.
+
+Run the test suite using:
+
+```bash
+python -m pytest
+```
+
+Current Version 2 test status:
+
+```text
+34 passed
+```
+
+Test files include:
+
+```text
+tests/
+├── test_validator.py
+├── test_cleaner.py
+├── test_reporting.py
+└── test_exporter.py
+```
+
+---
+
+# ⚙️ Continuous Integration
+
+Version 2 uses **GitHub Actions** for automated testing.
+
+The workflow runs whenever code is pushed or a pull request is opened against:
+
+```text
+main
+version-2
+```
+
+Workflow file:
+
+```text
+.github/workflows/tests.yml
+```
+
+The CI pipeline:
+
+```text
+Checkout Repository
+        ↓
+Set Up Python
+        ↓
+Install Dependencies
+        ↓
+Install Pytest
+        ↓
+Run Automated Tests
+        ↓
+Pass / Fail
+```
+
+This helps ensure that new changes do not break existing functionality.
+
+---
+
+# 🛠️ Technology Stack
+
+- Python
+- Pandas
+- Streamlit
+- Pytest
+- Git
+- GitHub
+- GitHub Actions
+- Streamlit Community Cloud
+
+---
+
+# 📂 Project Structure
+
+```text
 csv-data-quality-checker/
 │
 ├── app.py
-├── requirements.txt
 ├── README.md
+├── requirements.txt
+├── V2_PLAN.md
 │
 ├── data_quality/
-│ ├── metrics.py
-│ └── validator.py
+│   ├── __init__.py
+│   ├── validator.py
+│   ├── metrics.py
+│   ├── cleaner.py
+│   ├── reporting.py
+│   └── exporter.py
 │
 ├── tests/
-│ └── test_validator.py
+│   ├── test_validator.py
+│   ├── test_cleaner.py
+│   ├── test_reporting.py
+│   └── test_exporter.py
 │
 ├── sample_data/
-│ └── sample_dataset.csv
+│   └── sample_dataset.csv
 │
-└── docs/
-└── quality_score.md
-📐 Quality Score
+├── docs/
+│   └── quality_score.md
+│
+└── .github/
+    └── workflows/
+        └── tests.yml
+```
 
-The application calculates an overall quality score starting from 100.
+---
 
-The current formula is:
+# 💻 Run Locally
 
-Quality Score =
-100 - Missing Percentage - Duplicate Row Percentage
+## 1. Clone the repository
 
-The final score cannot fall below 0.
+```bash
+git clone https://github.com/scotlanbettes/csv-data-quality-checker.git
+cd csv-data-quality-checker
+```
 
-Example
+To work specifically with Version 2:
 
-If a dataset has:
+```bash
+git checkout version-2
+```
 
-Missing Percentage: 6.67%
-Duplicate Row Percentage: 6.66%
+---
 
-Then:
+## 2. Create a virtual environment
 
-100 - 6.67 - 6.66 = 86.67
-
-Therefore:
-
-Quality Score: 86.67 / 100
-Assessment: Good
-Score Interpretation
-Score Assessment
-90–100 Excellent
-75–89.99 Good
-50–74.99 Needs Attention
-0–49.99 Poor
-
-For the complete methodology, see docs/quality_score.md.
-
-🔍 Data Quality Checks
-Missing Values
-
-The application identifies empty or null cells and calculates the percentage of missing cells in the dataset.
-
-Duplicate Rows
-
-The application identifies rows that appear more than once and calculates the percentage of duplicate rows.
-
-Duplicate IDs
-
-If the dataset contains an id column, the application checks for duplicate ID values.
-
-If an id column is not present, duplicate-ID validation is skipped.
-
-Validation Results
-
-The dashboard displays:
-
-Total rows checked
-Duplicate rows
-Duplicate IDs
-Missing values by column
-💻 Run Locally
-
-1. Clone the repository
-   git clone https://github.com/scotlanbettes/csv-data-quality-checker.git
-   cd csv-data-quality-checker
-2. Create a virtual environment
-
-Windows PowerShell:
-
+```bash
 python -m venv .venv
+```
 
-Activate it:
+### Windows PowerShell
 
-.venv\Scripts\Activate.ps1 3. Install dependencies
-pip install -r requirements.txt 4. Run the application
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+---
+
+## 3. Install application dependencies
+
+```bash
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+For development and testing:
+
+```bash
+pip install pytest
+```
+
+---
+
+## 4. Run the application
+
+```bash
 streamlit run app.py
+```
 
-The application will open in your browser.
+If the Streamlit launcher is unavailable, use:
 
-🧪 Testing
+```bash
+python -m streamlit run app.py
+```
 
-The project includes automated tests for the data-validation functionality.
+The application will normally open at:
 
-Run:
+```text
+http://localhost:8501
+```
 
+---
+
+## 5. Run automated tests
+
+```bash
 python -m pytest
+```
 
-Current test status:
+---
 
-7 passed
-🎯 Project Purpose
+# 📁 Sample Dataset
 
-Data quality is an important part of data analysis, data engineering, and business operations.
+A demonstration dataset is included at:
 
-This project demonstrates how a reusable Python data-quality engine can be combined with an interactive dashboard to help users:
+```text
+sample_data/sample_dataset.csv
+```
 
-Upload a dataset
-Identify common data-quality issues
-Quantify those issues
-Calculate an overall quality score
-Investigate missing and duplicate data
-Understand the quality of their dataset
+The sample data contains intentional quality issues so users can explore the application's detection and cleaning features without preparing their own CSV file.
 
-The project also demonstrates practical experience with Python development, data processing, data validation, automated testing, Streamlit application development, Git/GitHub collaboration, pull requests, and cloud deployment.
+---
 
-👥 Contributors
-Scotlan Bettes
+# 🎯 Project Purpose
 
-Contributions:
+Data quality is important in data analysis, data engineering, machine learning, reporting, and business operations.
 
-Designed the data-quality checking workflow
-Developed data validation functionality
-Implemented missing-value detection
-Implemented duplicate-row detection
-Implemented duplicate-ID validation
-Developed quality metrics
-Implemented the overall quality-score calculation
-Developed automated tests
-Created the sample dataset
-Contributed to project documentation
-Managed Git/GitHub repository workflow
-Integrated project contributions
-Prepared the project for deployment
+Poor-quality datasets can contain:
+
+- Missing information
+- Duplicate records
+- Invalid identifiers
+- Inconsistent formatting
+- Mixed data types
+- Unexpected numerical values
+- Formatting inconsistencies
+
+CSV Data Quality Checker demonstrates how a reusable Python data-quality engine can be combined with an interactive Streamlit interface to help users:
+
+1. Upload data
+2. Detect quality problems
+3. Quantify those problems
+4. Identify problematic columns
+5. Clean common issues
+6. Compare data before and after cleaning
+7. Export improved datasets
+8. Generate quality reports
+
+The project also demonstrates practical experience with:
+
+- Python software development
+- Pandas data processing
+- Data validation
+- Data cleaning
+- Statistical outlier detection
+- Application architecture
+- Automated testing
+- Continuous integration
+- Streamlit development
+- Git and GitHub
+- Branch-based development
+- Cloud deployment
+
+---
+
+# 📜 Project History
+
+## Version 1 — Collaborative Development
+
+The original version of CSV Data Quality Checker was developed collaboratively by:
+
+- **Scotlan Bettes**
+- **Job Munyoki**
+
+Version 1 focused on:
+
+- CSV upload
+- Missing-value detection
+- Duplicate-row detection
+- Duplicate-ID validation
+- Basic quality metrics
+- Overall quality score
+- Streamlit dashboard
+- Dataset visualization
+- Automated tests
+- Git/GitHub collaboration
+
+### Scotlan Bettes — Version 1 Contributions
+
+- Designed the original data-quality workflow
+- Developed validation functionality
+- Implemented missing-value detection
+- Implemented duplicate-row detection
+- Implemented duplicate-ID validation
+- Developed quality metrics
+- Implemented the original quality-score calculation
+- Developed automated tests
+- Created sample data
+- Contributed documentation
+- Managed repository integration
+- Supported deployment preparation
 
 GitHub:
+
 https://github.com/scotlanbettes
 
-Job Munyoki
+### Job Munyoki — Version 1 Contributions
 
-Contributions:
-
-Developed the Streamlit dashboard
-Implemented CSV upload functionality
-Built the dataset overview interface
-Integrated data-quality metrics into the dashboard
-Implemented quality-score presentation
-Added validation-result displays
-Added missing-values-by-column visualization
-Implemented quality-breakdown visualization
-Improved the interactive user experience
-Contributed through Git branches and pull requests
-Tested the dashboard and CSV workflow
+- Developed the Streamlit dashboard
+- Implemented CSV upload functionality
+- Built the dataset-overview interface
+- Integrated quality metrics into the dashboard
+- Implemented quality-score presentation
+- Added validation-result displays
+- Added missing-value visualizations
+- Implemented quality-breakdown visualization
+- Improved application UX
+- Tested the dashboard and CSV workflow
+- Contributed through feature branches and pull requests
 
 GitHub:
+
 https://github.com/JobMunyoki
 
-🤝 Collaboration Workflow
+---
 
-The project was developed collaboratively using Git and GitHub.
+# 🚀 Version 2 — Independent Upgrade
 
-Create Feature Branch
-↓
-Develop Feature
-↓
-Test Locally
-↓
+**Developer: Job Munyoki**
+
+Version 2 builds on the original collaborative project and was independently designed and implemented as a major upgrade by Job Munyoki.
+
+Version 2 development includes:
+
+- Expanded validation engine
+- Empty-string detection
+- Whitespace detection
+- Mixed data-type detection
+- IQR-based numeric outlier detection
+- Capitalization inconsistency detection
+- Configurable identifier column
+- Weighted dataset-quality scoring
+- Column-level quality scoring
+- Data-cleaning engine
+- Missing-value strategies
+- Text standardization
+- Before-and-after reporting
+- CSV export
+- Quality-report export
+- Redesigned Streamlit dashboard
+- Expanded test suite
+- GitHub Actions CI
+- Version 2 documentation
+
+GitHub:
+
+https://github.com/JobMunyoki
+
+---
+
+# 🌿 Development Workflow
+
+Version 2 is developed on a dedicated branch:
+
+```text
+version-2
+```
+
+Typical workflow:
+
+```text
+Plan Feature
+    ↓
+Implement Feature
+    ↓
+Write / Update Tests
+    ↓
+Run Tests Locally
+    ↓
 Commit Changes
-↓
-Push Feature Branch
-↓
-Create Pull Request
-↓
-Review / Integration
-↓
-Merge into Main
-↓
-Deploy Application
+    ↓
+Push to version-2
+    ↓
+GitHub Actions Runs Tests
+    ↓
+Review Results
+    ↓
+Continue Development
+```
 
-This project demonstrates practical collaborative software-development practices using Git, GitHub, feature branches, and pull requests.
+This keeps the stable Version 1 history separate while Version 2 is developed and tested.
 
-🔗 Project Links
+---
 
-Live Application:
+# 🔗 Project Links
 
-https://csv-data-quality-checker-zbqgjhzwciuvngr2gjerh3.streamlit.app/
-
-GitHub Repository:
+## GitHub Repository
 
 https://github.com/scotlanbettes/csv-data-quality-checker
 
-📄 License
+## Version 2 Branch
 
-This project is intended for demonstration purposes.
+https://github.com/scotlanbettes/csv-data-quality-checker/tree/version-2
+
+## Current Live Application
+
+https://csv-data-quality-checker-zbqqjhzwciuvngr2gjerh3.streamlit.app/
+
+## Job Munyoki GitHub
+
+https://github.com/JobMunyoki
+
+---
+
+# 📄 License / Usage
+
+This project is currently maintained as a portfolio, demonstration, and educational software project.
